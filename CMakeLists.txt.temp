@@ -1,0 +1,141 @@
+cmake_minimum_required()			#CMake的最低版本号
+
+project()				  		   #项目名称
+
+find_package()   				    #查找系统中的依赖项
+
+ament_target_dependencies()          #依赖于其他目标文件，确保其他目标已被构建 
+
+add_executable()				    #生成可执行二进制文件
+
+install()						   #生成可安装目标
+
+ament_package()						#生成功能包
+
+rosidl_generate_interfaces()		# 自定义消息类型接口
+<<<<<<<<<<<<<<<<<<<<<<<<<template<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+cmake_minimum_required(VERSION 3.5)
+project(test_c)
+
+# Default to C99
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
+
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
+
+add_executable(talker src/publisher_member_function.cpp)	# 修改2
+ament_target_dependencies(talker rclcpp std_msgs)			# 修改3
+
+install(TARGETS
+  talker												# 修改4
+  DESTINATION lib/${PROJECT_NAME})
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # uncomment the line when a copyright and license is not present in all source files
+  #set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # uncomment the line when this package is not in a git repo
+  #set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+# 添加自定义消息类型需要添加项
+find_package(geometry_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/Num.msg"				# 自定义1
+  "msg/Sphere.msg"			# 自定义2
+  "srv/AddThreeInts.srv"     # 自定义3
+  DEPENDENCIES geometry_msgs
+)
+
+ament_package()
+
+<<<<<<<<<<<<<<<<~/dev_ws/src/test.cpp<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+1. 
+add_executable(test src/test.cpp)	# test为你输入节点后执行的名称，如ros2 run test_c test（前一个test_c为包名，后一个test则为这里的设置的名称，代表具体执行的代码）
+ament_target_dependencies(test rclcpp)	# 添加依赖项
+2.
+install(TARGETS
+  test
+  DESTINATION lib/${PROJECT_NAME}
+)
+3.
+# 添加自定义消息类型需要添加项
+# 下面两项是固定的，geometry_msgs是用于生成消息依赖包
+find_package(geometry_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/Num.msg"				# 自定义1
+  "msg/Sphere.msg"			# 自定义2
+  "srv/AddThreeInts.srv"     # 自定义3
+  DEPENDENCIES geometry_msgs
+)
+4.
+<package format="3">
+  <name>..</name>
+  <version>0.0.0</version>
+  <description>...</description>
+  <maintainer email="lanhanba@todo.todo">...</maintainer>
+  <license>...</license>
+  <buildtool_depend>...</buildtool_depend>
+  <exec_depend>...</exec_depend>
+  <exec_depend>...</exec_depend>
+
+  <export>
+    <build_type>...</build_type>
+  </export>
+</package>
+<<<<<<<<<<<<<<<<<<<<<for python<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+from setuptools import setup
+
+package_name = 'test_python'
+
+setup(
+    name=package_name,
+    version='0.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='lanhanba',
+    maintainer_email='lanhanba@todo.todo',
+    description='TODO: Package description',
+    license='TODO: License declaration',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            # 结构如下：节点名 = 功能包名.代码文件.执行入口函数名(一般执行入口函数名都是main，也就是说python代码中一般要有main函数)
+            # 通过ros2 run test_python test 来执行test_python.test:main下的函数
+            # 如果有多个python代码文件都需要一一添加，名称不能一样
+            "test = test_python.test:main",
+            "test2 = test_python.test2:main"
+        ],
+    },
+)
+
